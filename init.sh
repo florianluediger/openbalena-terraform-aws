@@ -10,7 +10,7 @@ sleep 1m
 
 # Install packages
 sudo apt update
-sudo apt install -y build-essential git docker.io libssl-dev nodejs npm
+sudo apt install -y git docker.io libssl-dev nodejs npm
 
 # Install docker-compose
 sudo curl -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose
