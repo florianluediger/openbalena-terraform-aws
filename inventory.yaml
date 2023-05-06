@@ -1,0 +1,10 @@
+all:
+    hosts:
+        openbalena:
+            ansible_host: your.ec2.host.here
+            ansible_ssh_private_key_file: ./openbalena.key
+            ansible_user: ubuntu
+    vars:
+        username: your.username.here
+        password: your.password.here
+        domain: your.domain.here

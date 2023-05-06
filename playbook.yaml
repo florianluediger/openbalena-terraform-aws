@@ -1,0 +1,65 @@
+- name: Install OpenBalena
+  hosts: all
+  tasks:
+    - name: Install packages
+      become: true
+      apt:
+        name: "{{ item }}"
+        update_cache: true
+      with_items:
+        - docker.io
+        - libssl-dev
+        - nodejs
+        - npm
+        - acl
+    - name: Install docker-compose
+      become: true
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '+x'
+    - name: Create balena user
+      become: true
+      user:
+        name: balena
+        groups: docker
+    - name: Download OpenBalena
+      become: true
+      become_user: balena
+      git:
+        repo: 'https://github.com/balena-io/open-balena.git'
+        dest:  /home/balena/open-balena
+    - name: Run quickstart script
+      become: true
+      become_user: balena
+      command: ~/open-balena/scripts/quickstart -c -U {{ username }} -P {{ password }} -d {{ domain }}
+    - name: Patch hosts file
+      become: true
+      command: /home/balena/open-balena/scripts/patch-hosts {{ domain }}
+    - name: Start balena
+      become: true
+      become_user: balena
+      command: ~/open-balena/scripts/compose up -d
+    - name: Find cert-provider id
+      become: true
+      become_user: balena
+      command: ~/open-balena/scripts/compose ps -q cert-provider
+      register: cert_provider_id
+    - name: Remove line from cert-provider.sh
+      become: true
+      become_user: balena
+      community.docker.docker_container_exec:
+        container: "{{ cert_provider_id.stdout }}"
+        command: /bin/bash -c "grep -v 'Unable to acquire a staging certificate' cert-provider.sh > cert-provider.sh.temp"
+    - name: Remove another line from cert-provider.sh
+      become: true
+      become_user: balena
+      community.docker.docker_container_exec:
+        container: "{{ cert_provider_id.stdout }}"
+        command: /bin/bash -c "grep -v 'Unable to detect certificate change over. Cannot issue a production certificate' cert-provider.sh.temp > cert-provider.sh"
+    - name: Restart cert-provider docker container
+      become: true
+      become_user: balena
+      community.docker.docker_container:
+        name: "{{ cert_provider_id.stdout }}"
+        restart: true

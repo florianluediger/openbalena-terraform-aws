@@ -93,17 +93,6 @@ resource "aws_instance" "openbalena" {
   }
   key_name        = aws_key_pair.openbalena_ssh_key.key_name
   security_groups = [aws_security_group.openbalena.name]
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = tls_private_key.openbalena_ssh_key.private_key_openssh
-    host        = self.public_dns
-  }
-
-  provisioner "remote-exec" {
-    script = "./init.sh"
-  }
 }
 
 data "aws_route53_zone" "openbalena" {
