@@ -24,11 +24,14 @@ sudo usermod -aG docker balena
 
 # Install balena
 sudo su balena -c "git clone https://github.com/balena-io/open-balena.git ~/open-balena"
-sudo su balena -c "~/open-balena/scripts/quickstart -U $USERNAME -P $PASSWORD -d $DOMAIN"
-
-# Copy CA certificate to ubuntu home to enable copying with scp later
-sudo cp /home/balena/open-balena/config/certs/root/ca.crt /home/ubuntu/ca.crt
-sudo chown ubuntu /home/ubuntu/ca.crt
+sudo su balena -c "~/open-balena/scripts/quickstart -c -U $USERNAME -P $PASSWORD -d $DOMAIN"
+sudo /home/balena/open-balena/scripts/patch-hosts $DOMAIN
 
 # Start balena
 sudo su balena -c "~/open-balena/scripts/compose up -d"
+
+# Fix cert provider
+sudo su balena -c "docker exec $(sudo su balena -c "~/open-balena/scripts/compose ps -q cert-provider") /bin/bash -c \"grep -v 'Unable to acquire a staging certificate' cert-provider.sh > cert-provider.sh.temp\""
+sudo su balena -c "docker exec $(sudo su balena -c "~/open-balena/scripts/compose ps -q cert-provider") /bin/bash -c \"grep -v 'Unable to detect certificate change over. Cannot issue a production certificate' cert-provider.sh.temp > cert-provider.sh\""
+sudo su balena -c "docker stop $(sudo su balena -c "~/open-balena/scripts/compose ps -q cert-provider")"
+sudo su balena -c "docker start $(sudo su balena -c "~/open-balena/scripts/compose ps -q cert-provider")"
