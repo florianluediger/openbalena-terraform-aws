@@ -57,7 +57,7 @@ To connect to balena, you need to add the balena URL to your local balena config
 balenaUrl: 'your-domain-here.com'
 ```
 
-Now you can use your balena CLI to log in with the credentials you have set in the init.sh script.
+Now you can use your balena CLI to log in with the credentials you have set in the `inventory.yaml` file.
 This enables you to use the balena CLI as usual.
 
 ```bash
