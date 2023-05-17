@@ -96,45 +96,51 @@ resource "aws_instance" "openbalena" {
 }
 
 data "aws_route53_zone" "openbalena" {
+  count   = var.create_dns_records ? 1 : 0
   name = var.domain_name
 }
 
 resource "aws_route53_record" "api" {
+  count   = var.create_dns_records ? 1 : 0
   name    = "api.${var.domain_name}"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.openbalena.zone_id
+  zone_id = data.aws_route53_zone.openbalena[0].zone_id
   records = [aws_instance.openbalena.public_dns]
-  ttl = 5
+  ttl     = 5
 }
 
 resource "aws_route53_record" "registry" {
+  count   = var.create_dns_records ? 1 : 0
   name    = "registry.${var.domain_name}"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.openbalena.zone_id
+  zone_id = data.aws_route53_zone.openbalena[0].zone_id
   records = [aws_instance.openbalena.public_dns]
-  ttl = 5
+  ttl     = 5
 }
 
 resource "aws_route53_record" "vpn" {
+  count   = var.create_dns_records ? 1 : 0
   name    = "vpn.${var.domain_name}"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.openbalena.zone_id
+  zone_id = data.aws_route53_zone.openbalena[0].zone_id
   records = [aws_instance.openbalena.public_dns]
-  ttl = 5
+  ttl     = 5
 }
 
 resource "aws_route53_record" "s3" {
+  count   = var.create_dns_records ? 1 : 0
   name    = "s3.${var.domain_name}"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.openbalena.zone_id
+  zone_id = data.aws_route53_zone.openbalena[0].zone_id
   records = [aws_instance.openbalena.public_dns]
-  ttl = 5
+  ttl     = 5
 }
 
 resource "aws_route53_record" "tunnel" {
+  count   = var.create_dns_records ? 1 : 0
   name    = "tunnel.${var.domain_name}"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.openbalena.zone_id
+  zone_id = data.aws_route53_zone.openbalena[0].zone_id
   records = [aws_instance.openbalena.public_dns]
-  ttl = 5
+  ttl     = 5
 }

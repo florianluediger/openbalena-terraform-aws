@@ -64,3 +64,11 @@ This enables you to use the balena CLI as usual.
 balena login
 balena fleets
 ```
+
+## What if I don't want to manage my domain with AWS?
+
+If you don't want to use AWS to manage your domain, you need to set the terraform variable `create_dns_records` to `false`.
+After applying the terraform configuration, you have to create CNAME records to the domain name of the EC2 host which you can get from the terraform outputs.
+You need CNAME records for the following subdomains: api, registry, vpn, s3, tunnel
+
+After you created the necessary records, you can proceed with the Ansible deployment.
