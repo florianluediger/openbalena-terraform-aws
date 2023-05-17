@@ -3,7 +3,7 @@
 ## Project setup
 
 You will need a domain that is registered with AWS so the required hosted zone can be configured.
-Specify your domain name in the `terraform.tfvars` file and also configure it in the `inventory.yaml` file.
+Specify your domain name in the `terraform.tfvars` file and also configure it in the `openbalena-ansible/inventory.yaml` file.
 You also need to specify your desired username and password for OpenBalena.
 
 
@@ -39,12 +39,12 @@ ssh -i openbalena.key ubuntu@$(terraform output -raw openbalena_ssh_host)
 
 To install OpenBalena, you need to have Ansible installed.
 You also need to have the openbalena.key file to authenticate at the EC2 instance.
-Configure the `inventory.yaml` file with your EC2 host that you can get from the terraform outputs.
+Configure the `openbalena-ansible/inventory.yaml` file with your EC2 host that you can get from the terraform outputs.
 
 After finishing the configuration, you can deploy your ansible playbook.
 
 ```bash
-ansible-playbook -i inventory.yaml playbook.yaml
+ansible-playbook -i openbalena-ansible/inventory.yaml openbalena-ansible/playbook.yaml
 ```
 
 ## Using OpenBalena
